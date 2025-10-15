@@ -2,69 +2,103 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Escáner de Código QR</title>
   <script src="https://unpkg.com/html5-qrcode"></script>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       text-align: center;
-      background: black;
+      background: #000;
+      color: white;
       margin: 0;
-      padding: 30px;
-    }
-    h2 {
-      color: #1e3a8a;
-      margin-bottom: 10px;
-    }
-    p {
-      color: #444;
-      margin-bottom: 25px;
-    }
-    #reader {
-      width: 320px;
-      margin: 0 auto 25px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      display: none;
-    }
-    #result {
-      background: rgb(255, 255, 255);
-      border-radius: 12px;
       padding: 20px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-      max-width: 420px;
+    }
+
+    h2 {
+      color: #00bcd4;
+      margin-bottom: 8px;
+      font-size: 1.4em;
+    }
+
+    p {
+      color: #bbb;
+      font-size: 0.95em;
+      margin-bottom: 20px;
+    }
+
+    #reader {
+      width: 100%;
+      max-width: 380px;
+      margin: 0 auto 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+      border: 2px solid #00bcd4;
+    }
+
+    #result {
+      background: #1a1a1a;
+      color: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+      max-width: 380px;
       margin: auto;
       text-align: left;
+      font-size: 0.95em;
+      line-height: 1.4em;
     }
+
     #result h3 {
-      color: #16a34a;
-      margin-bottom: 15px;
+      color: #00e676;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
       gap: 6px;
+      font-size: 1.1em;
     }
+
     .campo {
-      margin: 8px 0;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 5px;
+      margin: 6px 0;
+      border-bottom: 1px solid #333;
+      padding-bottom: 4px;
     }
+
     .campo strong {
-      color: #1e3a8a;
+      color: #00bcd4;
     }
+
     button {
-      margin-top: 25px;
-      background: #1e3a8a;
-      color: white;
+      margin-top: 20px;
+      background: #00bcd4;
+      color: #000;
       border: none;
-      padding: 10px 18px;
+      padding: 12px 20px;
       border-radius: 8px;
       cursor: pointer;
-      font-size: 16px;
-      transition: background 0.2s;
+      font-size: 1em;
+      font-weight: 600;
+      width: 90%;
+      max-width: 380px;
+      transition: all 0.2s;
     }
+
     button:hover {
-      background: #2563eb;
+      background: #03a9f4;
+    }
+
+    @media (max-width: 600px) {
+      #reader {
+        width: 100%;
+      }
+      #result {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      button {
+        font-size: 0.95em;
+      }
     }
   </style>
 </head>
@@ -75,18 +109,15 @@
 
   <div id="reader"></div>
 
-  <div id="result">
-    Esperando escaneo...
-  </div>
+  <div id="result">Esperando escaneo...</div>
 
   <button id="scanButton">Iniciar escaneo</button>
 
   <script>
     let html5QrCode;
 
-    // Función para iniciar la cámara
     async function startScanner() {
-      document.getElementById("result").innerHTML = "Escaneando...";
+      document.getElementById("result").innerHTML = "📡 Escaneando...";
       document.getElementById("reader").style.display = "block";
       document.getElementById("scanButton").style.display = "none";
 
@@ -94,20 +125,18 @@
 
       await html5QrCode.start(
         { facingMode: "environment" },
-        { fps: 10, qrbox: 250 },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
         onScanSuccess,
         onScanError
       );
     }
 
-    // Función cuando se detecta un QR
     async function onScanSuccess(decodedText) {
       await html5QrCode.stop();
       document.getElementById("reader").style.display = "none";
       document.getElementById("scanButton").style.display = "inline-block";
-      document.getElementById("scanButton").innerText = "Escanear otro código";
+      document.getElementById("scanButton").innerText = "📷 Escanear otro código";
 
-      // Reemplazar saltos de línea (\n) y organizarlos
       let textoLimpio = decodedText.replace(/\\n/g, "\n");
       let lineas = textoLimpio.split("\n").filter(l => l.trim() !== "");
 
@@ -115,7 +144,7 @@
       lineas.forEach(linea => {
         let partes = linea.split(":");
         if (partes.length === 2) {
-          html += `<div class="campo"><strong>${partes[0]}:</strong> ${partes[1]}</div>`;
+          html += `<div class="campo"><strong>${partes[0]}:</strong> ${partes[1].trim()}</div>`;
         } else {
           html += `<div class="campo">${linea}</div>`;
         }
@@ -125,7 +154,7 @@
     }
 
     function onScanError(errorMessage) {
-      // Ignorar errores frecuentes de lectura
+      // Ignorar errores comunes de lectura
     }
 
     document.getElementById("scanButton").addEventListener("click", startScanner);
