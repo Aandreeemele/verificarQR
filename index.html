@@ -93,15 +93,41 @@
       let html = `<h3>✅ Código detectado correctamente</h3>`;
       let numero = "";
       let correo = "";
+      let nombre = "";
+      let apellido = "";
+      let turno = "";
 
       lineas.forEach(linea => {
-        let partes = linea.split(":");
-        if (partes.length === 2) {
-          let clave = partes[0].trim().toLowerCase();
-          let valor = partes[1].trim();
-          html += `<div class="campo"><strong>${partes[0]}:</strong> ${valor}</div>`;
-          if (clave.includes("tel") || clave.includes("numero") || clave.includes("whatsapp")) numero = valor;
-          if (clave.includes("correo") || clave.includes("email")) correo = valor;
+  let partes = linea.split(":");
+
+  if (partes.length === 2) {
+
+    let claveOriginal = partes[0].trim();
+    let clave = claveOriginal.toLowerCase();
+    let valor = partes[1].trim();
+
+    html += `<div class="campo"><strong>${claveOriginal}:</strong> ${valor}</div>`;
+
+    // 📱 teléfono
+    if (clave.includes("tel") || clave.includes("numero") || clave.includes("whatsapp"))
+      numero = valor;
+
+    // 📧 correo
+    if (clave.includes("correo") || clave.includes("email"))
+      correo = valor;
+
+    // 👤 nombre
+    if (clave.includes("nombre"))
+      nombre = valor;
+
+    // 👤 apellido
+    if (clave.includes("apellido"))
+      apellido = valor;
+
+    // ⛪ turno
+    if (clave.includes("turno"))
+      turno = valor;
+
         } else {
           html += `<div class="campo">${linea}</div>`;
         }
@@ -110,17 +136,30 @@
       // Botones para enviar "Hola Mundo"
       if (numero) {
   const mensajeWhatsApp = encodeURIComponent(
-    "Con gran gozo espiritual y profunda devoción, comunicamos que la Hermandad Jesús del Aposento y Señor Sepultado ha quedado oficialmente registrada en nuestra base de datos y escrita en nuestras actividades anuales. ¡Que la fe y la devoción sigan guiando nuestro caminar!"
-  );
+`Estimado(a) ${nombre} ${apellido},
+
+La Hermandad Jesús del Aposento y Señor Sepultado confirma su registro correctamente.
+
+🕯️ Turno asignado: ${turno}
+
+Que nuestro Señor continúe bendiciendo su fe y devoción.`
+);
 
   html += `<a class="accion-btn" href="https://wa.me/${numero}?text=${mensajeWhatsApp}" target="_blank">📱 WhatsApp Enviar mensaje</a>`;
 }
 
 if (correo) {
-  const asunto = encodeURIComponent("Registro Hermandad Jesús del Aposento y Señor Sepultado");
+  const asunto = encodeURIComponent("Registro Hermandad Virgen de la Soledad Mixco");
   const cuerpo = encodeURIComponent(
-    "Con gran gozo espiritual y profunda devoción, comunicamos que la Hermandad Jesús del Aposento y Señor Sepultado ha quedado oficialmente registrada en nuestra base de datos y escrita en nuestras actividades anuales. ¡Que la fe y la devoción sigan guiando nuestro caminar!"
-  );
+`Estimado(a) ${nombre} ${apellido},
+
+Su registro ha sido confirmado exitosamente.
+
+Turno asignado: ${turno}
+
+Gracias por formar parte de nuestras actividades procesionales.
+Dios le bendiga.`
+);
 
   html += `<a class="accion-btn" href="mailto:${correo}?subject=${asunto}&body=${cuerpo}" target="_blank">📧 Enviar correo</a>`;
 }
