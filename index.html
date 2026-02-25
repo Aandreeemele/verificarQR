@@ -127,6 +127,9 @@
     // ⛪ turno
     if (clave.includes("turno"))
       turno = valor;
+    // contraseña
+    if (clave.includes("contraseña"))
+      contraseña = valor;
 
         } else {
           html += `<div class="campo">${linea}</div>`;
@@ -141,6 +144,7 @@
 La Hermandad Jesús del Aposento y Señor Sepultado confirma su registro correctamente.
 
 🕯️ Turno asignado: ${turno}
+   Contraseña del turno: ${contraseña}
 
 Que nuestro Señor continúe bendiciendo su fe y devoción.`
 );
@@ -156,6 +160,7 @@ if (correo) {
 Su registro ha sido confirmado exitosamente.
 
 Turno asignado: ${turno}
+Contraseña del turno: ${contraseña}
 
 Gracias por formar parte de nuestras actividades procesionales.
 Dios le bendiga.`
