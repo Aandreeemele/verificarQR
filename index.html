@@ -139,14 +139,18 @@
       // Botones para enviar "Hola Mundo"
       if (numero) {
   const mensajeWhatsApp = encodeURIComponent(
-`Estimado(a) ${nombre} ${apellido},
+`Estimado(a) *${nombre} ${apellido}*,
 
-La Hermandad Jesús del Aposento y Señor Sepultado confirma su registro correctamente.
+La Hermandad Virgen de la Soledad Mixco confirma su registro de pre-inscripción correctamente para nuestras actividades de *Semana Santa 2026*, recuerde los siguientes datos:
 
-🕯️ Turno asignado: ${turno}
-   Contraseña del turno: ${contraseña}
+Turno asignado: *${turno}*
+Contraseña del turno: *${contraseña}*
 
-Que nuestro Señor continúe bendiciendo su fe y devoción.`
+Importante tomar en consideración las recomendaciones.
+Estar al pendiente de nuestras redes sociales donde estaremos indicando la fecha de entrega de su cartulina asi mismo que pueda realizar el pago del turno adquirido.
+
+#500 años de conocer a Jesús
+Hermandad Virgen de la Soledad Mixco`
 );
 
   html += `<a class="accion-btn" href="https://wa.me/${numero}?text=${mensajeWhatsApp}" target="_blank">📱 WhatsApp Enviar mensaje</a>`;
