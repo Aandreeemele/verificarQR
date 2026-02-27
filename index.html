@@ -1,192 +1,261 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Escáner de Código QR</title>
-  <link rel="manifest" href="manifest.json"> 
-  <meta name="theme-color" content="#2196f3">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Escáner de Código QR</title>
 
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      text-align: center;
-      background: #000;
-      color: white;
-      margin: 0;
-      padding: 20px;
-    }
+<script src="https://unpkg.com/html5-qrcode"></script>
 
-    h2 { color: #00bcd4; margin-bottom: 8px; font-size: 1.4em; }
-    p { color: #bbb; font-size: 0.95em; margin-bottom: 20px; }
+<style>
+body{
+font-family:"Segoe UI",Arial;
+text-align:center;
+background:#000;
+color:white;
+padding:20px;
+}
 
-    #reader { width: 100%; max-width: 380px; margin: 0 auto 20px; border-radius: 12px; overflow: hidden; display: none; border: 2px solid #00bcd4; }
+#reader{
+width:100%;
+max-width:380px;
+margin:auto;
+display:none;
+border:2px solid #00bcd4;
+border-radius:12px;
+}
 
-    #result {
-      background: #1a1a1a; color: white; border-radius: 10px; padding: 15px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.4); max-width: 380px; margin: auto; text-align: left; font-size: 0.95em; line-height: 1.4em;
-    }
+#result{
+background:#1a1a1a;
+padding:15px;
+border-radius:10px;
+max-width:380px;
+margin:auto;
+text-align:left;
+}
 
-    #result h3 { color: #00e676; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; font-size: 1.1em; }
-    .campo { margin: 6px 0; border-bottom: 1px solid #333; padding-bottom: 4px; }
-    .campo strong { color: #00bcd4; }
+.campo{
+margin:6px 0;
+border-bottom:1px solid #333;
+padding-bottom:4px;
+}
 
-    .accion-btn {
-      margin-top: 10px; background: #00e676; color: #000; border: none; padding: 8px 12px;
-      border-radius: 8px; cursor: pointer; font-weight: 600; margin-right: 8px;
-      text-decoration: none; display: inline-block;
-    }
-    .accion-btn:hover { background: #00c853; }
+.accion-btn{
+margin-top:10px;
+background:#25D366;
+color:black;
+padding:8px 12px;
+border-radius:8px;
+text-decoration:none;
+display:inline-block;
+font-weight:600;
+}
 
-    button {
-      margin-top: 20px; background: #00bcd4; color: #000; border: none; padding: 12px 20px;
-      border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 600; width: 90%; max-width: 380px; transition: all 0.2s;
-    }
-    button:hover { background: #03a9f4; }
-
-    @media (max-width: 600px) {
-      #reader { width: 100%; }
-      #result { font-size: 0.9em; padding: 12px; }
-      button { font-size: 0.95em; }
-    }
-  </style>
+button{
+margin-top:20px;
+background:#00bcd4;
+border:none;
+padding:12px;
+border-radius:8px;
+width:90%;
+max-width:380px;
+font-weight:bold;
+}
+</style>
 </head>
+
 <body>
 
-  <h2>📷 Escáner de Código QR</h2>
-  <p>Apunta la cámara hacia el código para leer la información.</p>
+<h2>📷 Escáner de Código QR</h2>
 
-  <div id="reader"></div>
+<div id="reader"></div>
+<div id="result">Esperando escaneo...</div>
 
-  <div id="result">Esperando escaneo...</div>
+<button id="scanButton">Iniciar escaneo</button>
 
-  <button id="scanButton">Iniciar escaneo</button>
+<script>
 
-  <script>
-    let html5QrCode;
+let html5QrCode;
 
-    async function startScanner() {
-      document.getElementById("result").innerHTML = "📡 Escaneando...";
-      document.getElementById("reader").style.display = "block";
-      document.getElementById("scanButton").style.display = "none";
+async function startScanner(){
 
-      html5QrCode = new Html5Qrcode("reader");
+document.getElementById("reader").style.display="block";
+document.getElementById("scanButton").style.display="none";
 
-      await html5QrCode.start(
-        { facingMode: "environment" },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        onScanSuccess,
-        onScanError
-      );
-    }
+html5QrCode=new Html5Qrcode("reader");
 
-    async function onScanSuccess(decodedText) {
-      await html5QrCode.stop();
-      document.getElementById("reader").style.display = "none";
-      document.getElementById("scanButton").style.display = "inline-block";
-      document.getElementById("scanButton").innerText = "📷 Escanear otro código";
+await html5QrCode.start(
+{facingMode:"environment"},
+{fps:10,qrbox:{width:250,height:250}},
+onScanSuccess
+);
+}
 
-      let textoLimpio = decodedText.replace(/\\n/g, "\n");
-      let lineas = textoLimpio.split("\n").filter(l => l.trim() !== "");
+async function onScanSuccess(decodedText){
 
-      let html = `<h3>✅ Código detectado correctamente</h3>`;
-      let numero = "";
-      let correo = "";
-      let nombre = "";
-      let apellido = "";
-      let turno = "";
+await html5QrCode.stop();
 
-      lineas.forEach(linea => {
-  let partes = linea.split(":");
+document.getElementById("reader").style.display="none";
+document.getElementById("scanButton").style.display="inline-block";
+document.getElementById("scanButton").innerText="📷 Escanear otro código";
 
-  if (partes.length === 2) {
+let texto=decodedText.replace(/\\n/g,"\n");
+let lineas=texto.split("\n").filter(l=>l.trim()!="");
 
-    let claveOriginal = partes[0].trim();
-    let clave = claveOriginal.toLowerCase();
-    let valor = partes[1].trim();
+let html=`<h3>✅ Código detectado correctamente</h3>`;
 
-    html += `<div class="campo"><strong>${claveOriginal}:</strong> ${valor}</div>`;
+let numero="";
+let correo="";
+let nombre="";
+let apellido="";
+let turno="";
+let contraseña="";
 
-    // 📱 teléfono
-    if (clave.includes("tel") || clave.includes("numero") || clave.includes("whatsapp"))
-      numero = valor;
+lineas.forEach(linea=>{
 
-    // 📧 correo
-    if (clave.includes("correo") || clave.includes("email"))
-      correo = valor;
+let partes=linea.split(":");
 
-    // 👤 nombre
-    if (clave.includes("nombre"))
-      nombre = valor;
+if(partes.length===2){
 
-    // 👤 apellido
-    if (clave.includes("apellido"))
-      apellido = valor;
+let claveOriginal=partes[0].trim();
+let clave=claveOriginal.toLowerCase();
+let valor=partes[1].trim();
 
-    // ⛪ turno
-    if (clave.includes("turno"))
-      turno = valor;
-    // contraseña
-    if (clave.includes("contraseña"))
-      contraseña = valor;
+html+=`<div class="campo"><strong>${claveOriginal}:</strong> ${valor}</div>`;
 
-        } else {
-          html += `<div class="campo">${linea}</div>`;
-        }
-      });
+if(clave.includes("tel")||clave.includes("numero")||clave.includes("whatsapp"))
+numero=valor;
 
-      // Botones para enviar "Hola Mundo"
-      if (numero) {
-  const mensajeWhatsApp = encodeURIComponent(
+if(clave.includes("correo")||clave.includes("email"))
+correo=valor;
+
+if(clave.includes("nombre"))
+nombre=valor;
+
+if(clave.includes("apellido"))
+apellido=valor;
+
+if(clave.includes("turno"))
+turno=valor;
+
+if(clave.includes("contraseña"))
+contraseña=valor;
+
+}
+});
+
+
+// ================= WHATSAPP =================
+if(numero){
+
+const mensajeWhatsApp=encodeURIComponent(
 `Estimado(a) *${nombre} ${apellido}*,
 
 La Hermandad Virgen de la Soledad Mixco confirma su registro de pre-inscripción correctamente para nuestras actividades de *Semana Santa 2026*, recuerde los siguientes datos:
 
 Turno asignado: *${turno}*
-Contraseña del turno: *${contraseña}*
+Contraseña: *${contraseña}*
 
-Importante tomar en consideración las recomendaciones.
-Estar al pendiente de nuestras redes sociales donde estaremos indicando la fecha de entrega de su cartulina asi mismo que pueda realizar el pago del turno adquirido.
+Importante tomar en consideración las recomendaciones:
+Para pago y entrega de Cartulina estaremos ubicados en el atrio de la Parroquia Santo Domingo de Guzmán todos los domingos de Cuaresma de 7:00 am a 1:00 pm. Quinto Domingo y Domingo de Ramos de 7:00 am a 5:00 pm.
+Es importante presentar su Código QR o DPI para la entrega de la Cartulina.
 
-#500 años de conocer a Jesús
+#500añosDeConocerAJesús
 Hermandad Virgen de la Soledad Mixco`
 );
 
-  html += `<a class="accion-btn" href="https://wa.me/${numero}?text=${mensajeWhatsApp}" target="_blank">📱 WhatsApp Enviar mensaje</a>`;
-}
+const uniformeHombre=encodeURIComponent(
+`Estimada hermana *${nombre} ${apellido}*,
 
-if (correo) {
-  const asunto = encodeURIComponent("Registro Hermandad Virgen de la Soledad Mixco");
-  const cuerpo = encodeURIComponent(
-`Estimado(a) ${nombre} ${apellido},
+Agradecemos la adquisición de su turno llevar en hombros a Nuestra Madre Santísima en esta *Semana Santa 2026:* *${turno}*.
 
-Su registro ha sido confirmado exitosamente.
+*Uniformidad:*
+Camisa color blanco, traje completo oscuro, guantes, corbata y zapatos color negro. *NO UTILIZAR tenis, celulares y lentes oscuros en filas.*
 
-Turno asignado: ${turno}
-Contraseña del turno: ${contraseña}
+*A LOS HERMANOS CARGADORES*
+Se les solicita presentarse con la uniformidad indicada anteriormente. Recuerde que, al momento de adquirir su turno, acepto la normativa de la uniformidad y comportamiento dictados por la Hermandad. *Por lo que de no ser acatadas las mismas nos reservamos su participación.*
 
-Gracias por formar parte de nuestras actividades procesionales.
-Dios le bendiga.`
+Madre Santísima, de rodillas ante ti, te pedimos nos consigas de nuestro Padre Celestial el perdón de nuestros pecados, por mediación de tu Hijo Jesucristo.
+
+*500 años de Conocer a Jesús.*
+
+*Santísima Virgen de Dolores Ruega por nosotros*
+*Santísima Virgen de Soledad Ruega por nosotros*`
 );
 
-  html += `<a class="accion-btn" href="mailto:${correo}?subject=${asunto}&body=${cuerpo}" target="_blank">📧 Enviar correo</a>`;
+const uniformeMujer=encodeURIComponent(
+`Estimada hermana *${nombre} ${apellido}*,
+
+Agradecemos la adquisición de su turno llevar en hombros a Nuestra Madre Santísima en esta *Semana Santa 2026:* *${turno}*.
+
+*Uniformidad:*
+Vestido o conjunto de falda y blusa negra, con mangas y sin escote pronunciado, la falda debe de ser debajo de la rodilla y sin abertura pronunciada, mantilla o madrileña, medias y zapatos negros. Si utiliza traje típico, debe ser de luto y acompañado de suéter negro. *NO UTILIZAR brillantes, tenis, celulares y lentes oscuros en filas.*
+
+*A LAS HERMANAS CARGADORAS*
+Se les solicita presentarse con la uniformidad indicada anteriormente. Recuerde que, al momento de adquirir su turno, acepto la normativa de la uniformidad y comportamiento dictados por la Hermandad. Por lo que de no ser acatadas las mismas nos reservamos el derecho de su participación.
+
+Madre Santísima, de rodillas ante ti, te pedimos nos consigas de nuestro Padre Celestial el perdón de nuestros pecados, por mediación de tu Hijo Jesucristo.
+
+*500 años de Conocer a Jesús.*
+
+*Santísima Virgen de Dolores Ruega por nosotros*
+*Santísima Virgen de Soledad Ruega por nosotros*`
+);
+
+html+=`
+<a class="accion-btn" target="_blank"
+href="https://wa.me/${numero}?text=${mensajeWhatsApp}">
+📱 WhatsApp Confirmación
+</a>`;
+
+html+=`
+<a class="accion-btn" target="_blank"
+href="https://wa.me/${numero}?text=${uniformeHombre}">
+👕 Uniforme Hombre
+</a>`;
+
+html+=`
+<a class="accion-btn" target="_blank"
+href="https://wa.me/${numero}?text=${uniformeMujer}">
+👗 Uniforme Mujer
+</a>`;
 }
 
 
-      document.getElementById("result").innerHTML = html;
-    }
+// ================= CORREO =================
+if(correo){
 
-    function onScanError(errorMessage) { /* ignorar errores comunes */ }
+const asunto=encodeURIComponent("Registro Confirmado");
+const cuerpo=encodeURIComponent(
+`Estimado(a) *${nombre} ${apellido}*,
 
-    document.getElementById("scanButton").addEventListener("click", startScanner);
-  </script>
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js');
-    }
-    </script>
-    
+La Hermandad Virgen de la Soledad Mixco confirma su registro de pre-inscripción correctamente para nuestras actividades de *Semana Santa 2026*, recuerde los siguientes datos:
+
+Turno asignado: *${turno}*
+Contraseña: *${contraseña}*
+
+Importante tomar en consideración las recomendaciones:
+Para pago y entrega de Cartulina estaremos ubicados en el atrio de la Parroquia Santo Domingo de Guzmán todos los domingos de Cuaresma de 7:00 am a 1:00 pm. Quinto Domingo y Domingo de Ramos de 7:00 am a 5:00 pm.
+Es importante presentar su Código QR o DPI para la entrega de la Cartulina.
+
+#500añosDeConocerAJesús
+Hermandad Virgen de la Soledad Mixco`
+);
+
+html+=`
+<a class="accion-btn"
+href="mailto:${correo}?subject=${asunto}&body=${cuerpo}">
+📧 Enviar correo
+</a>`;
+}
+
+document.getElementById("result").innerHTML=html;
+}
+
+document.getElementById("scanButton")
+.addEventListener("click",startScanner);
+
+</script>
+
 </body>
 </html>
-
